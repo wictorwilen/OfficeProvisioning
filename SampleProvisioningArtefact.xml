@@ -107,6 +107,7 @@
           <p:Term name="term 2 " >
             <p:Term name="sub term 2-1">
               <p:Term name="sub term 2-1-1"/>
+              <p:Term name="sub term 2-1-2"/>
             </p:Term>
           </p:Term>
         </p:TermSet>

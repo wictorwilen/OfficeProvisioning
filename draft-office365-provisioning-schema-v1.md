@@ -134,12 +134,24 @@ file contains any top-level container marked `provisioning-support="required"`
 * The Provisioning Engine MUST support parameters
 * The Provisioning Engine MUST NOT provision any artefacts if any required
 Parameters are missing
+* The Provisioning Engine SHOULD support passing in one ore more sequences to
+be provisioned
+* The Provisioning Engine MUST use the overwrite options specified in the
+provisioning file.
+* If no overwrite options are specified in the provisioning file, it MUST
+be assumed that no artefacts should be overwritten.
 
 ## Provisioning Engine execution examples
 
 A Windows Console based engine:
 ~~~
 c:\> Provision.exe -file artefacts.xml -parameters "param1=value1, param2=value2"
+~~~
+
+A Windows Console based engine:
+~~~
+c:\> Provision.exe -file artefacts.xml -parameters "param1=value1, param2=value2"
+     -sequences "sequence1, sequence3"
 ~~~
 
 A PowerShell based engine:

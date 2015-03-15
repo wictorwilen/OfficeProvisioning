@@ -5,15 +5,17 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 
-  <!-- The main element-->
-  <xs:element name="Provisioning" type="ProvisioningType">
-    <xs:annotation></xs:annotation>
-  </xs:element>
-  <xs:element name="Sequence" type="SequenceType">
-    <xs:annotation></xs:annotation>
-  </xs:element>
+
+ 
+
+
 
   <xs:complexType name="ExtensionsType" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Extensions are custom XML elements and instructions that can be extensions of this default schema or vendor or engine specific extensions.
+      </xs:documentation>
+    </xs:annotation>
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:any processContents="lax" namespace="##other"/>
     </xs:sequence>
@@ -21,9 +23,26 @@
 
 
   <xs:simpleType name="ProvisioningRequirements">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Indicates that the target has to be provisioned during an provisioning execution.
+      </xs:documentation>
+    </xs:annotation>
     <xs:restriction base="xs:string">
-      <xs:enumeration value="required" />
-      <xs:enumeration value="optional" />
+      <xs:enumeration value="required">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            The target has to be provisioned and supported by the engine
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="optional">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            The target is optional to be provisioned and optional to be supported by the engine
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
 
@@ -44,10 +63,28 @@
     <xs:sequence minOccurs="0" maxOccurs="1">
       <xs:element name="Extensions" type="ExtensionsType" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
-    <xs:attribute name="id" type="xs:ID"  use="optional"/>
-    <xs:attribute name="title" type="ReplaceableString"  use="optional"/>
+    <xs:attribute name="id" type="xs:ID"  use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          A unique identifier for the container.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="title" type="ReplaceableString"  use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          A Title identifier for the container.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
 
-    <xs:attribute name="overwrite-options" type="OverwriteOptions" use="optional"/>
+    <xs:attribute name="overwrite-options" type="OverwriteOptions" use="optional" default="inherit">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          Specifies how the engine should handle situations when the container already exists. Default is to inherit
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="provisioning-support" type="ProvisioningRequirements" use="optional" default="optional">
       <xs:annotation>
         <xs:documentation>
@@ -350,7 +387,7 @@
                         <xs:complexContent>
                           <xs:extension base="TermBase">
                             <xs:sequence >
-                              <xs:element ref="Term" minOccurs="0" maxOccurs="unbounded"/>
+                              <xs:element name="Term" type="TermType" minOccurs="0" maxOccurs="unbounded"/>
                             </xs:sequence>
                           </xs:extension>
                         </xs:complexContent>
@@ -378,15 +415,14 @@
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="id" type="guid" use="optional"/>
   </xs:complexType>
-  
-  <xs:element name="Term" type="TermType">
-    
-  </xs:element>
+
+
+
   <xs:complexType name="TermType" >
     <xs:complexContent>
       <xs:extension base="TermBase">
         <xs:sequence maxOccurs="unbounded" minOccurs="0">
-          <xs:element ref="Term"  maxOccurs="unbounded" minOccurs="0"/>
+          <xs:element name="Term" type="TermType"  maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -420,17 +456,44 @@
   </xs:simpleType>
 
   <xs:simpleType name="OverwriteOptions">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Specifies how the engine should handle scenarios where the Container already exists.
+      </xs:documentation>
+    </xs:annotation>
     <xs:restriction base="xs:string">
-      <xs:enumeration value="prohibitied" />
-      <xs:enumeration value="allowed" />
-      <xs:enumeration value="inherit" />
+      <xs:enumeration value="prohibitied">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            The item must not be overwritten or updated
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="allowed">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            The item should be updated if already existing
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="inherit">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Overwrite option is inherited from parent Container or general preferences
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
 
   <!-- Containers -->
   <xs:complexType name="SequenceType" >
     <xs:annotation>
-      <xs:documentation>Yadda yadda</xs:documentation>
+      <xs:documentation xml:lang="en">
+        Each Provisioning file is split into a set of Sequence elements.
+        The Sequence element groups the artefacts to be provisioned into groups.
+        The Sequences must be evaluated by the provisioning engine in the order in which they appear.
+      </xs:documentation>
     </xs:annotation>
     <xs:sequence maxOccurs="unbounded" >
       <xs:element name="SiteCollection" type="SiteCollectionType" maxOccurs="unbounded" minOccurs="0"/>
@@ -442,15 +505,44 @@
       <xs:element name="Extensions" type="ExtensionsType" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="sequence-type" default="synchronous" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          Instructions to the Provisioning engine on how the Containers within the Sequence can be provisioned.
+        </xs:documentation>
+      </xs:annotation>
       <xs:simpleType>
         <xs:restriction base="xs:string">
-          <xs:enumeration value="synchronous"/>
-          <xs:enumeration value="asynchronous"/>
+          <xs:enumeration value="synchronous">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+                The Containers within this Sequence has to be provisioned Synchronous in the order that they appear.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="asynchronous">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+                The Containers within this Sequence can be provisioned Asynchronously.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="id" type="xs:ID" use="required"/>
-    <xs:attribute name="overwrite-options" type="OverwriteOptions" use="optional"/>
+    <xs:attribute name="id" type="xs:ID" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          A unique identifier of the Sequence
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="overwrite-options" type="OverwriteOptions" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          Specifies the default overwrite options for the Sequence
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
 
 
   </xs:complexType>
@@ -459,21 +551,38 @@
 
   <xs:complexType name="PreferencesType" >
     <xs:annotation>
-      <xs:documentation>Todo</xs:documentation>
+      <xs:documentation>General settins of this Provisioning file</xs:documentation>
     </xs:annotation>
 
     <xs:sequence>
       <xs:element name="ProvisioningSettings">
         <xs:complexType>
-          <xs:attribute name="overwrite-options" type="OverwriteOptions" use="optional"/>
+          <xs:attribute name="overwrite-options" type="OverwriteOptions" use="optional" default="allowed">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+                The default overwrite settings of the provisioning file. Default value is prohibited.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
         </xs:complexType>
       </xs:element>
       <xs:element name="Parameters">
+        <xs:annotation>
+          <xs:documentation>
+            Definition of parameters
+          </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
           <xs:sequence>
             <xs:element name="Parameter" maxOccurs="unbounded" >
               <xs:complexType mixed="true">
-                <xs:attribute name="key" use="required" type="xs:string"/>
+                <xs:attribute name="key" use="required" type="xs:string">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                      The name of the Parameter
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="required" use="optional" type="xs:boolean" default="false">
                   <xs:annotation>
                     <xs:documentation>When set to true then a value must be provided in the XML or provided at runtime</xs:documentation>
@@ -485,15 +594,37 @@
         </xs:complexType>
       </xs:element>
     </xs:sequence>
-    <xs:attribute name="version" type="xs:string"  use="optional"/>
-    <xs:attribute name="author" type="xs:string" use="optional"/>
-
+    <xs:attribute name="version" type="xs:string"  use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          Optional version number. 
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="author" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          Optional Author name
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
+
+
 
   <xs:complexType name="ProvisioningType">
     <xs:sequence>
       <xs:element name="Preferences" type="PreferencesType" minOccurs="1" maxOccurs="1"/>
-      <xs:element ref="Sequence" minOccurs="1" maxOccurs="unbounded"/>
+      <xs:element name="Sequence" type="SequenceType" minOccurs="1" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
+
+  <!-- The main element-->
+  <xs:element name="Provisioning" type="ProvisioningType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        This is the base element of a Provisioning File.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
 </xs:schema>
