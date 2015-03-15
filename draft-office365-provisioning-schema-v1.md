@@ -82,7 +82,28 @@ supports it.
 
 A Container is the base of everything that can be provisioned.
 
+The Schema currently support the following top level Containers
+* Site Collection (SPO)
+* TermStore (SPO)
+* Mailbox (EXO)
+* Yammer Group (Yammer)
+* User (Azure AD)
+* Group (Azure AD)
+
+Other containers are
+* Site (SPO)
+* List, Library, Folder, File
+* Site Group (SPO)
+* Term Group, Term Set, Term (SPO)
+
 ### Extensions
+
+The Extensions element in the schema can contain any arbitrary XML. This 
+element is ment to be used for extensions to the Schema. It might be vendor
+or engine specific extensions or fill gaps that the current schema does not 
+currently support.
+
+Extensions can be used in a Container or in a Sequence.
 
 ~~~
 <p:Extensions>
