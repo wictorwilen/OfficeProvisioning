@@ -1,0 +1,499 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="https://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd"
+    elementFormDefault="qualified"
+    xmlns="https://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+
+  <!-- The main element-->
+  <xs:element name="Provisioning" type="ProvisioningType">
+    <xs:annotation></xs:annotation>
+  </xs:element>
+  <xs:element name="Sequence" type="SequenceType">
+    <xs:annotation></xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="ExtensionsType" >
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:any processContents="lax" namespace="##other"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:simpleType name="ProvisioningRequirements">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="required" />
+      <xs:enumeration value="optional" />
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="guid">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        The representation of a GUID, generally the id of an element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!--THe base container type-->
+  <xs:complexType name="ContainerType" abstract="true">
+    <xs:sequence minOccurs="0" maxOccurs="1">
+      <xs:element name="Extensions" type="ExtensionsType" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID"  use="optional"/>
+    <xs:attribute name="title" type="ReplaceableString"  use="optional"/>
+
+    <xs:attribute name="overwrite-options" type="OverwriteOptions" use="optional"/>
+    <xs:attribute name="provisioning-support" type="ProvisioningRequirements" use="optional" default="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[
+          Requirements on the provisioning engine.
+          - required: the engine must support this container type and it must be provisioned
+          - optional: the engine must not support this container and it's optional to be provisioned
+          ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+
+
+  <xs:complexType name="GroupMembersType" >
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="GroupMember" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="id" use="required" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UserRef" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="id" use="required" type="xs:IDREF"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+
+
+  <!-- For instance a SharePoint Site -->
+  <xs:complexType name="SiteType" >
+    <xs:complexContent>
+      <xs:extension base="ContainerType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="Sites" minOccurs="0" maxOccurs="1"  >
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Site" type="SiteType" maxOccurs="unbounded" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Lists"  minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="List" type="ListType" maxOccurs="unbounded" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Folders"  minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Folder" type="FolderType" maxOccurs="unbounded" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Libraries"  minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Library" type="LibraryType" maxOccurs="unbounded" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Features"  minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Feature" type="FeatureType" maxOccurs="unbounded" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Fields"  minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Field" type="FieldType" maxOccurs="unbounded" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="ContentTypes"  minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="ContentType" type="ContentTypeType" maxOccurs="unbounded" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="SiteGroups" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="DefaultSiteGroup" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="SiteGroupMembers" type="GroupMembersType" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                    <xs:attribute name="default-group" use="required">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="Visitors"/>
+                          <xs:enumeration value="Members"/>
+                          <xs:enumeration value="Owners"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="SiteGroup" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="SiteGroupMembers" type="GroupMembersType" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                    <xs:attribute name="title" use="required" type="ReplaceableString"/>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="title" type="ReplaceableString"  use="required"/>
+
+        <xs:attribute name="template" type="SiteTemplates" use="required"/>
+        <xs:attribute name="url" type="ReplaceableString" use="optional"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name='ReplaceableString' id='ReplaceableString'>
+    <xs:annotation>
+      <xs:documentation>
+        A Replaceable string is a string that contains parameters enclosed by curly braces {...}
+        At runtime the provisioning engine replaces those parameters with the parameters specified in Preferences/Parameters
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base='xs:string'>
+      <xs:annotation>
+        <xs:documentation>
+          TODO: this should be replaced with a better regexp to validate Replaceable strings
+        </xs:documentation>
+      </xs:annotation>
+      <xs:pattern value='[\s\S]+'/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+
+
+  <!-- For instance a SharePoint Site Collection-->
+  <xs:complexType name="SiteCollectionType"  >
+    <xs:complexContent>
+      <xs:extension base="SiteType">
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+          <xs:element name="TermStore" type="TermStoreType" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="url" type="ReplaceableString" use="required"/>
+
+      </xs:extension>
+
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- For instance an Exchange Mailbox-->
+  <xs:complexType name="MailboxType" >
+    <xs:complexContent>
+      <xs:extension base="ContainerType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- For instance an SharePoint folder or folder in an inbox-->
+  <xs:complexType name="FolderType" >
+    <xs:complexContent>
+      <xs:extension base="ContainerType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="YammerGroupType" >
+    <xs:complexContent>
+      <xs:extension base="ContainerType">
+        <xs:attribute name="network" use="required" type="ReplaceableString"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ListType" >
+    <xs:complexContent>
+      <xs:extension base="ContainerType">
+        <xs:sequence>
+          <xs:element name="Views" maxOccurs="1" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="View" maxOccurs="unbounded" minOccurs="0">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="ViewQuery"/>
+                      <!-- TODO-->
+                    </xs:sequence>
+                    <xs:attribute name="title" type="ReplaceableString" use="required"/>
+                    <xs:attribute name="default" type="xs:boolean" use="optional"/>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="url" type="ReplaceableString" use="optional"/>
+        <xs:attribute name="template-type" type="xs:integer" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="LibraryType" >
+    <xs:complexContent>
+      <xs:extension base="ListType">
+        <xs:attribute name="template-type" type="xs:integer" use="optional"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FieldType" >
+    <xs:attribute name="id" use="required" type="guid"/>
+    <xs:attribute name="name" use="required" type="xs:string"/>
+    <xs:attribute name="title" use="optional" type="xs:string"/>
+    <xs:attribute name="group" use="optional" type="xs:string"/>
+    <xs:attribute name="max-length" use="optional" type="xs:integer"/>
+    <xs:attribute name="allow-deletion" use="optional" type="xs:boolean"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Text"/>
+          <xs:enumeration value="Integer"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+
+  <xs:simpleType name='ContentTypeId' id='ContentTypeId'>
+    <xs:restriction base='xs:string'>
+      <xs:annotation>
+        <xs:documentation>
+
+        </xs:documentation>
+      </xs:annotation>
+      <xs:pattern value='0x[a-zA-Z0-9]+'/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:complexType name="ContentTypeType" >
+    <xs:sequence>
+      <xs:element name="FieldRefs" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="FieldRef" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:attribute name="id" type="guid" use="required"/>
+                <xs:attribute name="name" use="optional" type="xs:string"/>
+                <xs:attribute name="title" use="optional" type="xs:string"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="contenttype-id" use="required" type="ContentTypeId"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="description" type="xs:string" use="optional"/>
+    <xs:attribute name="group" type="xs:string" use="optional"/>
+    <xs:attribute name="inherits" type="xs:boolean" use="optional" default="true"/>
+    <xs:attribute name="version" type="xs:integer" use="optional"/>
+  </xs:complexType>
+
+
+  <xs:complexType name="FeatureType" >
+    <xs:attribute name="feature-id" use="required" type="xs:string"/>
+    <xs:attribute name="name" use="optional" type="xs:string" />
+    <xs:attribute name="activated" use="optional" type="xs:boolean" default="true"/>
+    <xs:attribute name="scope" use="optional">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Web"/>
+          <xs:enumeration value="Site"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="TermStoreType" >
+    <xs:complexContent>
+      <xs:extension base="ContainerType">
+        <xs:sequence>
+          <xs:element name="TermGroup" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="TermBase">
+                  <xs:sequence>
+                    <xs:element name="TermSet" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:complexContent>
+                          <xs:extension base="TermBase">
+                            <xs:sequence >
+                              <xs:element ref="Term" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                          </xs:extension>
+                        </xs:complexContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="scope" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="default"/>
+              <xs:enumeration value="current"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="TermBase" >
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="id" type="guid" use="optional"/>
+  </xs:complexType>
+  
+  <xs:element name="Term" type="TermType">
+    
+  </xs:element>
+  <xs:complexType name="TermType" >
+    <xs:complexContent>
+      <xs:extension base="TermBase">
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+          <xs:element ref="Term"  maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+
+  </xs:complexType>
+
+
+
+  <xs:complexType name="UserType" >
+    <xs:complexContent>
+      <xs:extension base="ContainerType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GroupType" >
+    <xs:complexContent>
+      <xs:extension base="ContainerType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element name="GroupMembers" type="GroupMembersType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="SiteTemplates">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="STS#0" />
+      <xs:enumeration value="PROJECT#0" />
+      <xs:enumeration value="DEV#0" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OverwriteOptions">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="prohibitied" />
+      <xs:enumeration value="allowed" />
+      <xs:enumeration value="inherit" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Containers -->
+  <xs:complexType name="SequenceType" >
+    <xs:annotation>
+      <xs:documentation>Yadda yadda</xs:documentation>
+    </xs:annotation>
+    <xs:sequence maxOccurs="unbounded" >
+      <xs:element name="SiteCollection" type="SiteCollectionType" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="Mailbox" type="MailboxType" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="YammerGroup" type="YammerGroupType" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="TermStore" type="TermStoreType" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="User" type="UserType" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="Group" type="GroupType" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="Extensions" type="ExtensionsType" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="sequence-type" default="synchronous" use="optional">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="synchronous"/>
+          <xs:enumeration value="asynchronous"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="overwrite-options" type="OverwriteOptions" use="optional"/>
+
+
+  </xs:complexType>
+
+
+
+  <xs:complexType name="PreferencesType" >
+    <xs:annotation>
+      <xs:documentation>Todo</xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="ProvisioningSettings">
+        <xs:complexType>
+          <xs:attribute name="overwrite-options" type="OverwriteOptions" use="optional"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Parameters">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Parameter" maxOccurs="unbounded" >
+              <xs:complexType mixed="true">
+                <xs:attribute name="key" use="required" type="xs:string"/>
+                <xs:attribute name="required" use="optional" type="xs:boolean" default="false">
+                  <xs:annotation>
+                    <xs:documentation>When set to true then a value must be provided in the XML or provided at runtime</xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:string"  use="optional"/>
+    <xs:attribute name="author" type="xs:string" use="optional"/>
+
+  </xs:complexType>
+
+  <xs:complexType name="ProvisioningType">
+    <xs:sequence>
+      <xs:element name="Preferences" type="PreferencesType" minOccurs="1" maxOccurs="1"/>
+      <xs:element ref="Sequence" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

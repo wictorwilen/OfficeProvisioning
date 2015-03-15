@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<p:Provisioning xmlns:p="https://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd">
+  <p:Preferences>
+    <p:ProvisioningSettings overwrite-options="allowed"/>
+    
+    <p:Parameters>
+      <p:Parameter key="O365TenantName">contoso</p:Parameter>
+      <p:Parameter key="OptionalParam" required="true"/>
+      <p:Parameter key="YammerNetwork">contoso.com</p:Parameter>
+    </p:Parameters>
+  </p:Preferences>
+  <p:Sequence sequence-type="synchronous" id="seq-1">
+    <p:SiteCollection 
+      id="sc1" 
+      template="STS#0" 
+      title="Team sites" 
+      url="https://{O365TenantName}.sharepoint.com/teams/team-sites"
+      overwrite-options="allowed">
+      <p:Extensions>
+        <xyz:Test xmlns:xyz="http://xyz"/>
+      </p:Extensions>
+      <p:Sites>
+        <p:Site id="s123" template="STS#0" title="Sub site" url="sub-site">
+          <p:Features>
+            <p:Feature feature-id="b50e3104-6812-424f-a011-cc90e6327318" activated="true" scope="Site"  />
+            <p:Feature feature-id="7201d6a4-a5d3-49a1-8c19-19c4bac6e668" activated="true" scope="Web"/>
+          </p:Features>
+        </p:Site>
+      </p:Sites>
+      <p:Libraries>
+        <p:Library title="Other documents" url="OtherDocuments" />
+      </p:Libraries>
+      <p:Lists>
+        <p:List title="Other Tasks" template-type="102">
+          <p:Views>
+            <p:View title="Current Tasks" default="true">
+              <p:ViewQuery></p:ViewQuery>
+            </p:View>
+          </p:Views>
+        </p:List>
+      </p:Lists>
+      <p:Features>
+        
+      </p:Features>
+      <p:SiteGroups>
+        <p:DefaultSiteGroup default-group="Owners">
+          <p:SiteGroupMembers>
+            <p:UserRef id="user1"/>
+            <p:GroupMember id="garth.forth@contoso.com"/>
+          </p:SiteGroupMembers>
+        </p:DefaultSiteGroup>
+        <p:SiteGroup title="Managers">
+          <p:SiteGroupMembers>
+            <p:GroupMember id="garth.forth@contoso.com"/>
+            <p:UserRef id="user1"/>
+          </p:SiteGroupMembers>
+        </p:SiteGroup>
+      </p:SiteGroups>
+      <p:Fields>
+        <p:Field id="{23203E97-3BFE-40CB-AFB4-07AA2B86BF45}" 
+                 type="Text" 
+                 name="ProjectID" 
+                 title="Project ID" 
+                 group="Base.Foundation.Columns" 
+                 max-length="255" 
+                 
+                 allow-deletion="true" />
+
+      </p:Fields>
+     
+      <p:ContentTypes>
+        <p:ContentType contenttype-id="0x01005D4F34E4BE7F4B6892AEBE088EDD215E"
+                     name="General Project Document"
+                     group="Base Foundation Content Types"
+                     description="General Project Document Content Type"
+                     inherits="true"
+                     version="0">
+          <p:FieldRefs>
+            <p:FieldRef id="{B01B3DBC-4630-4ED1-B5BA-321BC7841E3D}" name="ProjectName" title="Project Name" />
+            <p:FieldRef id="{A5DE9600-B7A6-42DD-A05E-10D4F1500208}" name="ProjectManager" title="Project Manager" />
+            <p:FieldRef id="{F1A1715E-6C52-40DE-8403-E9AAFD0470D0}" name="DocumentDescription" title="Document Description" />
+            <p:FieldRef id="{23203E97-3BFE-40CB-AFB4-07AA2B86BF45}" name="ProjectID" title="Project ID" />
+          </p:FieldRefs>
+        </p:ContentType>
+      </p:ContentTypes>
+      
+      <p:TermStore scope="current">
+        <p:TermGroup name="asdf" id="{C49CE6E0-6CA5-4F9F-89A4-49FAE4B8338A}">
+          <p:TermSet name="Termset" id="{5880B01B-5D6F-4606-A492-3B03A2FB4DD7}">
+            <p:Term name="term 1"/>
+            <p:Term name="term   2">
+              <p:Term name="sub term 2-1 ">
+                <p:Term name="sub term 2-1-1"/>
+              </p:Term>
+            </p:Term>
+          </p:TermSet>
+        </p:TermGroup>
+      </p:TermStore>
+     
+    </p:SiteCollection>
+    
+    <p:Mailbox id="sc1-mailbox" title="Team Site Mailbox"/>
+    <p:TermStore scope="default">
+      <p:TermGroup name="asdf" id="{5880B01B-5D6F-4606-A492-3B03A2FB4DD7}">
+        <p:TermSet name="Termset" id="{C0864DB8-5C6C-4694-9FDA-8DBC093C9C18}">
+          <p:Term name="term 1"/>
+          <p:Term name="term 2 " >
+            <p:Term name="sub term 2-1">
+              <p:Term name="sub term 2-1-1"/>
+            </p:Term>
+          </p:Term>
+        </p:TermSet>
+      </p:TermGroup>
+    </p:TermStore>
+  </p:Sequence>
+  <p:Sequence id="seqq-2" sequence-type="asynchronous">
+    <p:YammerGroup id="y123"
+                  title="Yammer Group"
+                  overwrite-options="prohibitied"
+                  network="{YammerNetwork}"/>
+    <p:YammerGroup
+                  title="Another Yammer Group"
+                  overwrite-options="prohibitied"
+                  network="{YammerNetwork}"/>
+  </p:Sequence>
+  <p:Sequence id="s3" sequence-type="synchronous" overwrite-options="prohibitied">
+    <p:User title="John Doe" id="user1"/>
+    <p:User title="Jane Doe" id="user2"/>
+    <p:Group title="Test Users" overwrite-options="allowed">
+      <p:GroupMembers>
+        <p:UserRef id="user1"/>
+        <p:UserRef id="user2"/>
+      </p:GroupMembers> 
+    </p:Group>
+    <p:Extensions>
+      <my:CustomExtension  xmlns:my="http://tempuri"/>
+      <my2:AnotherExtension  xmlns:my2="http://tempuri2"/>
+    </p:Extensions>
+  </p:Sequence>
+</p:Provisioning>
