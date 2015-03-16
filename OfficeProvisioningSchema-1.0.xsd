@@ -6,7 +6,7 @@
 >
 
 
- 
+
 
 
 
@@ -107,11 +107,7 @@
           <xs:attribute name="id" use="required" type="xs:string"/>
         </xs:complexType>
       </xs:element>
-      <xs:element name="UserRef" minOccurs="0" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:attribute name="id" use="required" type="xs:IDREF"/>
-        </xs:complexType>
-      </xs:element>
+      <xs:element name="UserRef" minOccurs="0" maxOccurs="unbounded" type="UserRefType"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -261,10 +257,64 @@
     </xs:complexContent>
   </xs:complexType>
 
+
   <xs:complexType name="YammerGroupType" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A Yammer Group
+      </xs:documentation>
+    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="ContainerType">
-        <xs:attribute name="network" use="required" type="ReplaceableString"/>
+        <xs:sequence>
+          <xs:element name="Admins"  minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+                Administrators of the Yammer Group
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="UserRef"  type="UserRefType" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Members"  minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+                Members of the Yammer Group
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="UserRef"  type="UserRefType" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Description" type="xs:string" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+                Description of the Yammer Group
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element> 
+        </xs:sequence>
+        <xs:attribute name="network" use="required" type="ReplaceableString">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              The name of the Yammer network
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="privacy" use="optional" default="public">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="public"/>
+              <xs:enumeration value="private"/>
+              <xs:enumeration value="private-hidden"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -426,10 +476,7 @@
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
-
   </xs:complexType>
-
-
 
   <xs:complexType name="UserType" >
     <xs:complexContent>
@@ -437,6 +484,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  
   <xs:complexType name="GroupType" >
     <xs:complexContent>
       <xs:extension base="ContainerType">
@@ -446,6 +494,16 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <xs:complexType name="UserRefType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A reference to a UserType element
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="id" use="required" type="xs:IDREF"/>
+  </xs:complexType>
+
 
   <xs:simpleType name="SiteTemplates">
     <xs:restriction base="xs:string">
@@ -597,7 +655,7 @@
     <xs:attribute name="version" type="xs:string"  use="optional">
       <xs:annotation>
         <xs:documentation xml:lang="en">
-          Optional version number. 
+          Optional version number.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

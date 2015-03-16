@@ -141,6 +141,20 @@ provisioning file.
 * If no overwrite options are specified in the provisioning file, it MUST
 be assumed that no artefacts should be overwritten.
 
+## Provisioning context and permissions
+
+The Engine MUST pass the correct credentials when provisioning artefacts. 
+The engine might SHOULD ask the user for credentials or have an argument that 
+could be used to pass credentials.
+
+The Engine MUST handle access denied or incorrect permissions errors and log or
+display those message to the end-user. If an access denied error is caught when
+privisioning a Container that has the `provisioning-support="required"` set
+a fatal error MUST be thrown and no further artefacts MUST be provisioned.
+
+In this current draft it is assumed that the same credentials can be used for
+all services.
+
 ## Provisioning Engine execution examples
 
 A Windows Console based engine:
@@ -157,6 +171,7 @@ c:\> Provision.exe -file artefacts.xml -parameters "param1=value1, param2=value2
 A PowerShell based engine:
 ~~~
 PS C:\> Provision.ps1 -file artefacts.xml -parameters @{"param1" = "value1", "param2" = "value2"}
+        -credentials $creds
 ~~~
 
 # Disclaimer
