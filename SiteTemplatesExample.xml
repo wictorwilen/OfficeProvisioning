@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<p:Provisioning xmlns:p="http://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd">
+  <p:Preferences Author="Wictor Wilén">
+  </p:Preferences>
+  <p:Templates>
+    <p:SiteTemplate ID="SiteTemplate1"
+                    Title="Team Site">
+      <p:Extensions>
+        <pnp:RemoveAllThemes xmlns:pnp="http://pnp/extensions"/>
+      </p:Extensions>
+      <p:SiteTemplate Locale="1033">STS#0</p:SiteTemplate>
+      <p:Files>
+        <p:File Source="Assets/Classification.js" Target="~site/SiteAssets/classification.js" OverwriteOptions="Allowed"/>
+      </p:Files>
+    </p:SiteTemplate>
+  </p:Templates>
+
+</p:Provisioning>

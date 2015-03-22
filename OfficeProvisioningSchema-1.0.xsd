@@ -124,7 +124,7 @@
           TODO: this should be replaced with a better regexp to validate Replaceable strings
         </xs:documentation>
       </xs:annotation>
-      <xs:pattern value='[\s\S]+'/>
+      <xs:pattern value='[\s\S]*'/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -251,7 +251,7 @@
     <xs:sequence minOccurs="0" maxOccurs="1">
       <xs:element name="Extensions" type="ExtensionsDefinition" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
-    <xs:attribute name="ID" type="xs:ID"  use="optional">
+    <xs:attribute name="ID" type="xs:string"  use="optional">
       <xs:annotation>
         <xs:documentation xml:lang="en">
           A unique identifier for the container.
@@ -374,7 +374,7 @@
       <xs:extension base="ContainerDefinition">
         <xs:sequence>
           <xs:choice minOccurs="1">
-            <xs:element name="TemplateReference" type="xs:IDREF" nillable="false"/>
+            <xs:element name="TemplateReference" type="xs:string" nillable="false"/>
             <xs:element name="SiteTemplate" type="SiteTemplatesDefinition" nillable="false" />
           </xs:choice>
           <xs:group  minOccurs="0" maxOccurs="unbounded" ref="SiteElements"/>
@@ -529,6 +529,10 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="MembersCanShare" type="xs:boolean" use="optional"/>
+    <xs:attribute name="SiteLogoUrl" type="ReplaceableString" use="optional"/>
+    <xs:attribute name="MasterUrl"  type="ReplaceableString" use="optional"/>
+    <xs:attribute name="CustomMasterUrl"  type="ReplaceableString" use="optional"/>
   </xs:attributeGroup>
 
   <xs:complexType name="SiteTemplateDefinition" >
@@ -942,7 +946,7 @@
     <xs:sequence >
       <xs:element name="SiteTemplate" type="SiteTemplateDefinition"  minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="ID" type="xs:ID" use="required">
+    <xs:attribute name="ID" type="xs:string" use="optional">
       <xs:annotation>
         <xs:documentation xml:lang="en">
           A unique identifier of the Templates collection
@@ -961,6 +965,7 @@
     </xs:annotation>
     <xs:sequence maxOccurs="unbounded" >
       <xs:element name="SiteCollection" type="SiteCollectionDefinition" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="Site" type="SiteDefinition" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element name="TermStore" type="TermStoreDefinition" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element name="Extensions" type="ExtensionsDefinition" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
@@ -989,7 +994,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="ID" type="xs:ID" use="required">
+    <xs:attribute name="ID" type="xs:string" use="required">
       <xs:annotation>
         <xs:documentation xml:lang="en">
           A unique identifier of the Sequence
@@ -1010,7 +1015,7 @@
       <xs:documentation>General settins of this Provisioning file</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="ProvisioningSettings">
+      <xs:element name="ProvisioningSettings" minOccurs="0">
         <xs:complexType>
           <xs:attribute name="OverwriteOptions" type="OverwriteOptions" use="optional" default="Allowed">
             <xs:annotation>
@@ -1021,7 +1026,7 @@
           </xs:attribute>
         </xs:complexType>
       </xs:element>
-      <xs:element name="Parameters">
+      <xs:element name="Parameters" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             Definition of parameters
