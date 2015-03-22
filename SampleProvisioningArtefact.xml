@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<p:Provisioning xmlns:p="https://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd">
+<p:Provisioning xmlns:p="http://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd">
   <p:Preferences>
     <p:ProvisioningSettings OverwriteOptions="Allowed"/>
 
@@ -15,7 +15,7 @@
     <p:SiteTemplate ID="template1" Title="Default Team Site" QuickLaunchEnabled="false" EnableMinimalDownload="true">
       <p:Extensions>
         <asdf:asdf xmlns:asdf="asdf"/>
-        <pnp:RemoveAllDefaultThemes xmlns:pnp="http://pnp"/> 
+        <pnp:RemoveAllDefaultThemes xmlns:pnp="http://pnp"/>
       </p:Extensions>
       <p:SiteTemplate Locale="1053">STS#0</p:SiteTemplate>
       <p:PropertyBag>
@@ -47,7 +47,12 @@
                   Version="1" />
       </p:Extensions>
       <p:TemplateReference>template1</p:TemplateReference>
-      
+      <p:Fields>
+        <Field
+          xmlns="http://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd"
+          ID="{7B2B1712-A73D-4ad7-A9D0-662F0291713D}" Name="HealthRuleCheckEnabled" Type="Boolean" Group="_Hidden" AllowDeletion="FALSE" DisplayName="Aktiverad"  SourceID="http://schemas.microsoft.com/sharepoint/v3/fields" StaticName="HealthRuleCheckEnabled" Description="Om alternativet är markerat kontrolleras detta problem regelbundet." Overwrite="TRUE" ProvisioningAction="Provision" />
+
+      </p:Fields>
     </p:SiteCollection>
   </p:Sequence>
   <p:Sequence SequenceType="Synchronous" ID="seq-1">
@@ -76,7 +81,7 @@
           </p:Features>
         </p:Site>
       </p:Sites>
-   
+
       <p:Lists>
         <p:List Title="Other Tasks" TemplateType="102">
           <p:ContentTypeBindings>
@@ -95,7 +100,7 @@
               <p:RowLimit Paged="true">30</p:RowLimit>
             </p:View>
           </p:Views>
-        
+
         </p:List>
       </p:Lists>
       <p:Features>
@@ -106,7 +111,7 @@
                 Url="SitePages/Home.aspx"
                 OverwriteOptions="Allowed"
                 TemplateFile="Assets\HomepageTemplate.aspx">
-          <p:WebParts ZoneID="0" ZoneIndex="Left">
+          <p:WebParts ZoneID="Left" ZoneIndex="0">
             <p:WebPartXmlDefinition>
               <![CDATA[<webParts>
   <webPart xmlns="http://schemas.microsoft.com/WebPart/v3">
@@ -150,22 +155,20 @@
         <p:File Source="Assets\Classification-{lcid}.js" Target="~sitecollection/SiteAssets/Classification-{lcid}.js" OverwriteOptions="Allowed"/>
       </p:Files>
       <p:CustomActions>
-        <p:CustomAction ScriptSrc="~sitecollection/SiteAssets/Classification-{lcid}.js" 
-                        Title="SiteClassification" 
-                        Location="ScriptLink" 
+        <p:CustomAction ScriptSrc="~sitecollection/SiteAssets/Classification-{lcid}.js"
+                        Title="SiteClassification"
+                        Location="ScriptLink"
                         Sequence="30"/>
       </p:CustomActions>
       <p:SiteGroups>
         <p:DefaultSiteGroup DefaultGroup="Owners">
           <p:SiteGroupMembers>
-            <p:UserRef ID="user1"/>
             <p:GroupMember ID="garth.forth@contoso.com"/>
           </p:SiteGroupMembers>
         </p:DefaultSiteGroup>
         <p:SiteGroup Title="Managers">
           <p:SiteGroupMembers>
             <p:GroupMember ID="garth.forth@contoso.com"/>
-            <p:UserRef ID="user1"/>
           </p:SiteGroupMembers>
         </p:SiteGroup>
       </p:SiteGroups>
@@ -192,14 +195,13 @@
           </p:FieldRefs>
         </p:ContentType>
 
-
         <!-- Copy and Paste example, sets the namespace directly on the element-->
         <ContentType ID="0x01005D4F34E4BE7F4B6892AEBE088EDD215E"
                 Name="General Project Document"
                 Group="Base Foundation Content Types"
                 Description="General Project Document Content Type"
                 Inherits="true"
-                Version="0" xmlns="https://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd">
+                Version="0" xmlns="http://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd">
           <FieldRefs>
             <FieldRef ID="{23203E97-3BFE-40CB-AFB4-07AA2B86BF45}" Name="ProjectID" DisplayName="Project ID" />
             <FieldRef ID="{B01B3DBC-4630-4ED1-B5BA-321BC7841E3D}" Name="ProjectName" DisplayName="Project Name" />
@@ -214,9 +216,23 @@
           <p:TermSet Name="Termset" ID="{5880B01B-5D6F-4606-A492-3B03A2FB4DD7}">
             <p:Term Name="term 1"/>
             <p:Term Name="term   2">
-              <p:Term Name="sub term 2-1 ">
-                <p:Term Name="sub term 2-1-1"/>
-              </p:Term>
+              <p:ChildTerms>
+                <p:Term Name="sub term 2-1 ">
+                  <p:ChildTerms>
+                    <p:Term Name="sub term 2-1-1">
+
+                    </p:Term>
+                  </p:ChildTerms>
+                </p:Term>
+              </p:ChildTerms>
+              <p:TermDescriptions>
+                <p:TermDescription LCID="1053">asdf</p:TermDescription>
+                <p:TermDescription LCID="1050">asdf</p:TermDescription>
+              </p:TermDescriptions>
+              <p:Properties>
+                <p:Property Key="Key" Value="value"/>
+                <p:Property Key="Key2" Value="value2"/>
+              </p:Properties>
             </p:Term>
           </p:TermSet>
         </p:TermGroup>
@@ -224,16 +240,20 @@
 
     </p:SiteCollection>
 
-    <p:Mailbox ID="sc1-mailbox" Title="Team Site Mailbox"/>
     <p:TermStore Scope="Default">
       <p:TermGroup Name="asdf" ID="{5880B01B-5D6F-4606-A492-3B03A2FB4DD7}">
         <p:TermSet Name="Termset" ID="{C0864DB8-5C6C-4694-9FDA-8DBC093C9C18}">
           <p:Term Name="term 1"/>
           <p:Term Name="term 2 " >
-            <p:Term Name="sub term 2-1">
-              <p:Term Name="sub term 2-1-1"/>
-              <p:Term Name="sub term 2-1-2"/>
-            </p:Term>
+            <p:ChildTerms>
+              <p:Term Name="sub term 2-1">
+                <p:ChildTerms>
+                  <p:Term Name="sub term 2-1-1"/>
+                  <p:Term Name="sub term 2-1-2"/>
+                </p:ChildTerms>
+              </p:Term>
+            </p:ChildTerms>
+
           </p:Term>
         </p:TermSet>
       </p:TermGroup>
@@ -241,26 +261,7 @@
   </p:Sequence>
   <p:ImportSequence file="another-file.xml" />
 
-  <p:Sequence ID="seqq-2" SequenceType="Asynchronous">
-    <p:YammerGroup ID="y123"
-                  Title="Yammer Group"
-                  OverwriteOptions="Prohibitied"
-                  network="{YammerNetwork}"/>
-    <p:YammerGroup
-                  Title="Another Yammer Group"
-                  OverwriteOptions="Prohibitied"
-                  network="{YammerNetwork}"/>
-  </p:Sequence>
-
   <p:Sequence ID="s3" SequenceType="Synchronous" OverwriteOptions="Prohibitied">
-    <p:User Title="John Doe" ID="user1"/>
-    <p:User Title="Jane Doe" ID="user2"/>
-    <p:Group Title="Test Users" OverwriteOptions="Allowed">
-      <p:GroupMembers>
-        <p:UserRef ID="user1"/>
-        <p:UserRef ID="user2"/>
-      </p:GroupMembers>
-    </p:Group>
     <p:Extensions>
       <my:CustomExtension  xmlns:my="http://tempuri"/>
       <my2:AnotherExtension  xmlns:my2="http://tempuri2"/>

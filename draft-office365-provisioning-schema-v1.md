@@ -46,11 +46,41 @@ further documentation.
 
 ## Schema Namespace
 The schema namespace is: 
-    https://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd
+    http://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd
 
 ## Provisioning Schema basics
 
 The following are a high-level description of the schema
+
+## Provisioning Schema vs ye olde SharePoint Schema
+
+In order to provide as much backwards compatibility with CAML and the 
+SharePoint schemas, this provisioning schema uses the same XML formatting
+rules as the wss.xsd (Pascal Case elements, attributes and values).
+Also some elements have a direct representation in the provisioning schema:
+For instance this CAML Field definition can be copied to the provisioning 
+schema and only a namespace definition has to be added.
+From:
+~~~
+<Field ID="{7B2B1712-A73D-4ad7-A9D0-662F0291713D}" Name="HealthRuleCheckEnabled" 
+  Type="Boolean" Group="_Hidden" AllowDeletion="FALSE" DisplayName="Aktiverad"  
+  SourceID="http://schemas.microsoft.com/sharepoint/v3/fields" 
+  StaticName="HealthRuleCheckEnabled"  />
+~~~
+to:
+~~~
+<p:Fields>
+  <Field 
+    xmlns="http://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd"
+    ID="{7B2B1712-A73D-4ad7-A9D0-662F0291713D}" Name="HealthRuleCheckEnabled" 
+    Type="Boolean" Group="_Hidden" AllowDeletion="FALSE" DisplayName="Aktiverad"  
+    SourceID="http://schemas.microsoft.com/sharepoint/v3/fields" 
+    StaticName="HealthRuleCheckEnabled"
+    ProvisioningAction="Provision" />
+</p:Fields>
+~~~
+
+ 
 
 ### Parameters
 
@@ -58,15 +88,21 @@ Each Artefact file has a set of Parameters. Parameters can be defined in the
 Artefact file or provided as arguments to the Provisioining Engine.
 Parameters are used as replacements in the Artefact file. Specific attributes
 in the schema has the type `ReplaceableString`. These attributes can have 
-Parameters embedded, surrounded by curly braces ('{' and '}').
+Parameters embedded, surrounded by curly braces ('{' and '}'). The 
+`ReplaceableInt` can either be in integer or a integer parameter enclosed in 
+curly brackets
 
 ~~~
 <p:SiteCollection 
-  id="sc1" 
-  template="STS#0" 
-  title="Team sites" 
-  url="https://{O365TenantName}.sharepoint.com/teams/team-sites"
-  overwrite-options="allowed">
+  ID="sc1" 
+  Template="STS#0" 
+  Title="Team sites" 
+  Url="https://{O365TenantName}.sharepoint.com/teams/team-sites"
+  PrimarySiteCollectionAdmin="garthf@contoso.com"
+  OverwriteOptions="Allowed">
+  <p:SiteTemplate Locale="{lcid}">STS#0</p:SiteTemplate>
+...
+</p:SiteCollection>
 ~~~
 
 ### Sequence
@@ -85,24 +121,26 @@ A Container is the base of everything that can be provisioned.
 The Schema currently support the following top level Containers
 * Site Collection (SPO)
 * TermStore (SPO)
+
+Future containers
 * Mailbox (EXO)
 * Yammer Group (Yammer)
 * User (Azure AD)
 * Group (Azure AD)
 
-Other containers are
+Other inner containers are
 * Site (SPO)
-* List, Library, Folder, File (SPO)
-* Site Group (SPO)
-* Term Group, Term Set, Term (SPO)
+* Lists, Files, Pages (SPO)
+* Site Groups (SPO)
+* Term Groups, Term Sets, Terms (SPO)
 
 ### To provision or not provision
 
-The Schema has an attribute `provisioning-action` that is used to define how 
+The Schema has an attribute `ProvisioningAction` that is used to define how 
 the Container or item should provisioned or not. The default value is 
-`provision` which indicates that the engine MUST provision the item. A value
-of `unprovision` indicates that the engine MUST unprovision or permanently
-delete the item. A value of `ignore` indicates that the engine MUST ignore/skip
+`Provision` which indicates that the engine MUST provision the item. A value
+of `Unprovision` indicates that the engine MUST unprovision or permanently
+delete the item. A value of `Ignore` indicates that the engine MUST ignore/skip
 provisioning/unprovisioning of the item.
 
 ### Extensions
@@ -116,8 +154,16 @@ Extensions can be used in a `Container` or in a `Sequence`.
 
 ~~~
 <p:Extensions>
-  <my:CustomExtension  xmlns:my="http://tempuri"/>
-  <my2:AnotherExtension  xmlns:my2="http://tempuri2"/>
+  <pnp:TypeExtension xmlns:pnp="http://pnp" assembly="Abc.Def" type="Abc.Def.Ghi"/>
+  <np:ThemeExtension xmlns:pnp="http://pnp"
+    Name="Contoso"
+    ColorFile="Resources/Themes/Contoso/contoso.spcolor"
+    FontFile="Resources/Themes/Contoso/contoso.spfont"
+    BackgroundFile="Resources/Themes/Contoso/contosobg.jpg"
+    MasterPage="seattle.master"
+    AlternateCSS="Resources/Themes/Contoso/Contoso.css"
+    SiteLogo="Resources/Themes/Contoso/contosologo.png"
+    Version="1" />
 </p:Extensions>
 ~~~
 
@@ -139,7 +185,7 @@ Provisioning schema
 * The provisioning Engine MUST validate the schema
 * The Provisioning Engine MUST NOT support all top-level artefacts
 * The Provisioning Engine MUST NOT provision any artefacts if the artefact
-file contains any top-level container marked `provisioning-support="required"`
+file contains any top-level container marked `ProvisioningSupport="Required"`
 * The Provisioning Engine MUST support parameters
 * The Provisioning Engine MUST NOT provision any artefacts if any required
 Parameters are missing
@@ -158,7 +204,7 @@ could be used to pass credentials.
 
 The Engine MUST handle access denied or incorrect permissions errors and log or
 display those message to the end-user. If an access denied error is caught when
-privisioning a Container that has the `provisioning-support="required"` set
+privisioning a Container that has the `ProvisioningSupport="Required"` set
 a fatal error MUST be thrown and no further artefacts MUST be provisioned.
 
 In this current draft it is assumed that the same credentials can be used for
