@@ -1,137 +1,265 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <p:Provisioning xmlns:p="https://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd">
   <p:Preferences>
-    <p:ProvisioningSettings overwrite-options="allowed"/>
-    
+    <p:ProvisioningSettings OverwriteOptions="Allowed"/>
+
     <p:Parameters>
-      <p:Parameter key="O365TenantName">contoso</p:Parameter>
-      <p:Parameter key="OptionalParam" required="true"/>
-      <p:Parameter key="YammerNetwork">contoso.com</p:Parameter>
+      <p:Parameter Key="O365TenantName">contoso</p:Parameter>
+      <p:Parameter Key="OptionalParam" Required="true"/>
+      <p:Parameter Key="YammerNetwork">contoso.com</p:Parameter>
+      <p:Parameter Key="lcid">1033</p:Parameter>
     </p:Parameters>
   </p:Preferences>
-  <p:Sequence sequence-type="synchronous" id="seq-1">
-    <p:SiteCollection 
-      id="sc1" 
-      template="STS#0" 
-      title="Team sites" 
-      url="https://{O365TenantName}.sharepoint.com/teams/team-sites"
-      overwrite-options="allowed">
+  <p:Templates ID="site-templates">
+    <!-- template token: $tenanturl, $url, $name...?-->
+    <p:SiteTemplate ID="template1" Title="Default Team Site" QuickLaunchEnabled="false" EnableMinimalDownload="true">
       <p:Extensions>
-        <xyz:Test xmlns:xyz="http://xyz"/>
+        <asdf:asdf xmlns:asdf="asdf"/>
+        <pnp:RemoveAllDefaultThemes xmlns:pnp="http://pnp"/> 
       </p:Extensions>
+      <p:SiteTemplate Locale="1053">STS#0</p:SiteTemplate>
+      <p:PropertyBag>
+        <p:Property Key="SiteType" Value="Team Site" Indexed="true"/>
+      </p:PropertyBag>
+      <p:Features>
+        <p:Feature ID="b50e3104-6812-424f-a011-cc90e6327318" Activate="true" Scope="Site"  />
+      </p:Features>
+    </p:SiteTemplate>
+
+  </p:Templates>
+  <p:Sequence ID="use-the-templates">
+    <p:SiteCollection
+      Url="https://{O365TenantName}.sharepoint.com/teams/xyz"
+      Title="Based on a template"
+      ID="ti1"
+      PrimarySiteCollectionAdmin="garth.forth@contoso.com"
+      >
+      <p:Extensions>
+        <pnp:TypeExtension xmlns:pnp="http://pnp" assembly="Abc.Def" type="Abc.Def.Ghi"/>
+        <pnp:ThemeExtension xmlns:pnp="http://pnp"
+                  Name="Contoso"
+                  ColorFile="Resources/Themes/Contoso/contoso.spcolor"
+                  FontFile="Resources/Themes/Contoso/contoso.spfont"
+                  BackgroundFile="Resources/Themes/Contoso/contosobg.jpg"
+                  MasterPage="seattle.master"
+                  AlternateCSS="Resources/Themes/Contoso/Contoso.css"
+                  SiteLogo="Resources/Themes/Contoso/contosologo.png"
+                  Version="1" />
+      </p:Extensions>
+      <p:TemplateReference>template1</p:TemplateReference>
+      
+    </p:SiteCollection>
+  </p:Sequence>
+  <p:Sequence SequenceType="Synchronous" ID="seq-1">
+
+    <p:SiteCollection
+      ID="sc1"
+      Title="Team sites"
+      Url="https://{O365TenantName}.sharepoint.com/teams/team-sites"
+      OverwriteOptions="Allowed"
+      PrimarySiteCollectionAdmin="garth.forth@contoso.com">
+      <p:SiteTemplate Locale="1033">DEV#0</p:SiteTemplate>
       <p:Sites>
-        <p:Site id="s123" template="STS#0" title="Sub site" url="sub-site">
+        <p:Site ID="s123" Title="Sub site" Url="sub-site">
+          <p:SiteTemplate Locale="{lcid}">EHS#0</p:SiteTemplate>
+          <p:Fields>
+            <p:Field ID="{6E4F734B-6479-4046-B84F-220ACD432F1E}" Type="Choice" Name="Choices">
+              <p:Choices>
+                <p:Choice>Choice 1</p:Choice>
+                <p:Choice>Choice 2</p:Choice>
+              </p:Choices>
+            </p:Field>
+          </p:Fields>
           <p:Features>
-            <p:Feature feature-id="b50e3104-6812-424f-a011-cc90e6327318" activated="true" scope="Site"  />
-            <p:Feature feature-id="7201d6a4-a5d3-49a1-8c19-19c4bac6e668" activated="true" scope="Web"/>
+            <p:Feature ID="b50e3104-6812-424f-a011-cc90e6327318" Activate="true" Scope="Site"  />
+            <p:Feature ID="7201d6a4-a5d3-49a1-8c19-19c4bac6e668" Activate="true" Scope="Web"/>
           </p:Features>
         </p:Site>
       </p:Sites>
-      <p:Libraries>
-        <p:Library title="Other documents" url="OtherDocuments" />
-      </p:Libraries>
+   
       <p:Lists>
-        <p:List title="Other Tasks" template-type="102">
+        <p:List Title="Other Tasks" TemplateType="102">
+          <p:ContentTypeBindings>
+            <p:ContentTypeBinding ContentTypeID="0x01005D4F34E4BE7F4B6892AEBE088EDD215E" Default="true"/>
+          </p:ContentTypeBindings>
+
           <p:Views>
-            <p:View title="Current Tasks" default="true">
-              <p:ViewQuery></p:ViewQuery>
+            <p:View DisplayName="Current Tasks" DefaultVieww="true">
+              <p:JSLink>clienttemplates.js</p:JSLink>
+              <p:ViewFieldRefs>
+                <p:FieldRef Name="DocIcon"/>
+                <p:FieldRef Name="LinkFileName"/>
+                <p:FieldRef Name="Editor"/>
+              </p:ViewFieldRefs>
+              <p:ViewQuery><![CDATA[<OrderBy><FieldRef Name="FileLeafRef"/></OrderBy>]]></p:ViewQuery>
+              <p:RowLimit Paged="true">30</p:RowLimit>
             </p:View>
           </p:Views>
+        
         </p:List>
       </p:Lists>
       <p:Features>
-        
+
       </p:Features>
+      <p:Pages>
+        <p:Page IsHomePage="true"
+                Url="SitePages/Home.aspx"
+                OverwriteOptions="Allowed"
+                TemplateFile="Assets\HomepageTemplate.aspx">
+          <p:WebParts ZoneID="0" ZoneIndex="Left">
+            <p:WebPartXmlDefinition>
+              <![CDATA[<webParts>
+  <webPart xmlns="http://schemas.microsoft.com/WebPart/v3">
+    <metaData>
+      <type name="Microsoft.SharePoint.WebPartPages.GettingStartedWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" />
+      <importErrorMessage>Det går inte att importera den här webbdelen.</importErrorMessage>
+    </metaData>
+    <data>
+      <properties>
+        <property name="AllowZoneChange" type="bool">True</property>
+        <property name="HelpUrl" type="string" />
+        <property name="Hidden" type="bool">False</property>
+        <property name="MissingAssembly" type="string">Det går inte att importera den här webbdelen.</property>
+        <property name="Description" type="string" />
+        <property name="BaseViewID" type="string">1</property>
+        <property name="AllowHide" type="bool">True</property>
+        <property name="AllowMinimize" type="bool">True</property>
+        <property name="Title" type="string">{REPLACETHIS}</property>
+        <property name="TitleUrl" type="string" />
+        <property name="ExportMode" type="exportmode">All</property>
+        <property name="ChromeType" type="chrometype">None</property>
+        <property name="AllowConnect" type="bool">True</property>
+        <property name="Width" type="string" />
+        <property name="Height" type="string" />
+        <property name="CatalogIconImageUrl" type="string" />
+        <property name="HelpMode" type="helpmode">Modeless</property>
+        <property name="AllowEdit" type="bool">True</property>
+        <property name="TitleIconImageUrl" type="string" />
+        <property name="Direction" type="direction">NotSet</property>
+        <property name="AllowClose" type="bool">True</property>
+        <property name="ChromeState" type="chromestate">Normal</property>
+      </properties>
+    </data>
+  </webPart>
+</webParts>]]>
+            </p:WebPartXmlDefinition>
+          </p:WebParts>
+        </p:Page>
+      </p:Pages>
+      <p:Files>
+        <p:File Source="Assets\Classification-{lcid}.js" Target="~sitecollection/SiteAssets/Classification-{lcid}.js" OverwriteOptions="Allowed"/>
+      </p:Files>
+      <p:CustomActions>
+        <p:CustomAction ScriptSrc="~sitecollection/SiteAssets/Classification-{lcid}.js" 
+                        Title="SiteClassification" 
+                        Location="ScriptLink" 
+                        Sequence="30"/>
+      </p:CustomActions>
       <p:SiteGroups>
-        <p:DefaultSiteGroup default-group="Owners">
+        <p:DefaultSiteGroup DefaultGroup="Owners">
           <p:SiteGroupMembers>
-            <p:UserRef id="user1"/>
-            <p:GroupMember id="garth.forth@contoso.com"/>
+            <p:UserRef ID="user1"/>
+            <p:GroupMember ID="garth.forth@contoso.com"/>
           </p:SiteGroupMembers>
         </p:DefaultSiteGroup>
-        <p:SiteGroup title="Managers">
+        <p:SiteGroup Title="Managers">
           <p:SiteGroupMembers>
-            <p:GroupMember id="garth.forth@contoso.com"/>
-            <p:UserRef id="user1"/>
+            <p:GroupMember ID="garth.forth@contoso.com"/>
+            <p:UserRef ID="user1"/>
           </p:SiteGroupMembers>
         </p:SiteGroup>
       </p:SiteGroups>
       <p:Fields>
-        <p:Field id="{23203E97-3BFE-40CB-AFB4-07AA2B86BF45}" 
-                 type="Text" 
-                 name="ProjectID" 
-                 title="Project ID" 
-                 group="Base.Foundation.Columns" 
-                 max-length="255" 
-                 
-                 allow-deletion="true" />
-
+        <p:Field ID="{23203E97-3BFE-40CB-AFB4-07AA2B86BF45}" Type="Text" Name="ProjectID" DisplayName="Project ID" Group="Base.Foundation.Columns" MaxLength="255" AllowDeletion="TRUE" />
+        <p:Field ID="{B01B3DBC-4630-4ED1-B5BA-321BC7841E3D}" Type="Text" Name="ProjectName" DisplayName="Project Name" Group="Base.Foundation.Columns" MaxLength="255" AllowDeletion="TRUE" />
+        <p:Field ID="{A5DE9600-B7A6-42DD-A05E-10D4F1500208}" Type="Text" Name="ProjectManager" DisplayName="Project Manager" Group="Base.Foundation.Columns"  MaxLength="255" AllowDeletion="TRUE" />
+        <p:Field ID="{F1A1715E-6C52-40DE-8403-E9AAFD0470D0}" Type="Text" Name="DocumentDescription" DisplayName="Document Description" Group="Base.Foundation.Columns" MaxLength="255" AllowDeletion="TRUE" />
       </p:Fields>
-     
+
       <p:ContentTypes>
-        <p:ContentType contenttype-id="0x01005D4F34E4BE7F4B6892AEBE088EDD215E"
-                     name="General Project Document"
-                     group="Base Foundation Content Types"
-                     description="General Project Document Content Type"
-                     inherits="true"
-                     version="0">
+
+        <p:ContentType ID="0x01005D4F34E4BE7F4B6892AEBE088EDD215E"
+                 Name="General Project Document"
+                 Group="Base Foundation Content Types"
+                 Description="General Project Document Content Type"
+                 Inherits="true"
+                 Version="0">
           <p:FieldRefs>
-            <p:FieldRef id="{B01B3DBC-4630-4ED1-B5BA-321BC7841E3D}" name="ProjectName" title="Project Name" />
-            <p:FieldRef id="{A5DE9600-B7A6-42DD-A05E-10D4F1500208}" name="ProjectManager" title="Project Manager" />
-            <p:FieldRef id="{F1A1715E-6C52-40DE-8403-E9AAFD0470D0}" name="DocumentDescription" title="Document Description" />
-            <p:FieldRef id="{23203E97-3BFE-40CB-AFB4-07AA2B86BF45}" name="ProjectID" title="Project ID" />
+            <p:FieldRef ID="{23203E97-3BFE-40CB-AFB4-07AA2B86BF45}" Name="ProjectID" DisplayName="Project ID" />
+            <p:FieldRef ID="{B01B3DBC-4630-4ED1-B5BA-321BC7841E3D}" Name="ProjectName" DisplayName="Project Name" />
+            <p:FieldRef ID="{A5DE9600-B7A6-42DD-A05E-10D4F1500208}" Name="ProjectManager" DisplayName="Project Manager" />
+            <p:FieldRef ID="{F1A1715E-6C52-40DE-8403-E9AAFD0470D0}" Name="DocumentDescription" DisplayName="Document Description" />
           </p:FieldRefs>
         </p:ContentType>
+
+
+        <!-- Copy and Paste example, sets the namespace directly on the element-->
+        <ContentType ID="0x01005D4F34E4BE7F4B6892AEBE088EDD215E"
+                Name="General Project Document"
+                Group="Base Foundation Content Types"
+                Description="General Project Document Content Type"
+                Inherits="true"
+                Version="0" xmlns="https://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd">
+          <FieldRefs>
+            <FieldRef ID="{23203E97-3BFE-40CB-AFB4-07AA2B86BF45}" Name="ProjectID" DisplayName="Project ID" />
+            <FieldRef ID="{B01B3DBC-4630-4ED1-B5BA-321BC7841E3D}" Name="ProjectName" DisplayName="Project Name" />
+            <FieldRef ID="{A5DE9600-B7A6-42DD-A05E-10D4F1500208}" Name="ProjectManager" DisplayName="Project Manager" />
+            <FieldRef ID="{F1A1715E-6C52-40DE-8403-E9AAFD0470D0}" Name="DocumentDescription" DisplayName="Document Description" />
+          </FieldRefs>
+        </ContentType>
+
       </p:ContentTypes>
-      
-      <p:TermStore scope="current">
-        <p:TermGroup name="asdf" id="{C49CE6E0-6CA5-4F9F-89A4-49FAE4B8338A}">
-          <p:TermSet name="Termset" id="{5880B01B-5D6F-4606-A492-3B03A2FB4DD7}">
-            <p:Term name="term 1"/>
-            <p:Term name="term   2">
-              <p:Term name="sub term 2-1 ">
-                <p:Term name="sub term 2-1-1"/>
+      <p:TermStore Scope="Current">
+        <p:TermGroup Name="asdf" ID="{C49CE6E0-6CA5-4F9F-89A4-49FAE4B8338A}">
+          <p:TermSet Name="Termset" ID="{5880B01B-5D6F-4606-A492-3B03A2FB4DD7}">
+            <p:Term Name="term 1"/>
+            <p:Term Name="term   2">
+              <p:Term Name="sub term 2-1 ">
+                <p:Term Name="sub term 2-1-1"/>
               </p:Term>
             </p:Term>
           </p:TermSet>
         </p:TermGroup>
       </p:TermStore>
-     
+
     </p:SiteCollection>
-    
-    <p:Mailbox id="sc1-mailbox" title="Team Site Mailbox"/>
-    <p:TermStore scope="default">
-      <p:TermGroup name="asdf" id="{5880B01B-5D6F-4606-A492-3B03A2FB4DD7}">
-        <p:TermSet name="Termset" id="{C0864DB8-5C6C-4694-9FDA-8DBC093C9C18}">
-          <p:Term name="term 1"/>
-          <p:Term name="term 2 " >
-            <p:Term name="sub term 2-1">
-              <p:Term name="sub term 2-1-1"/>
-              <p:Term name="sub term 2-1-2"/>
+
+    <p:Mailbox ID="sc1-mailbox" Title="Team Site Mailbox"/>
+    <p:TermStore Scope="Default">
+      <p:TermGroup Name="asdf" ID="{5880B01B-5D6F-4606-A492-3B03A2FB4DD7}">
+        <p:TermSet Name="Termset" ID="{C0864DB8-5C6C-4694-9FDA-8DBC093C9C18}">
+          <p:Term Name="term 1"/>
+          <p:Term Name="term 2 " >
+            <p:Term Name="sub term 2-1">
+              <p:Term Name="sub term 2-1-1"/>
+              <p:Term Name="sub term 2-1-2"/>
             </p:Term>
           </p:Term>
         </p:TermSet>
       </p:TermGroup>
     </p:TermStore>
   </p:Sequence>
-  <p:Sequence id="seqq-2" sequence-type="asynchronous">
-    <p:YammerGroup id="y123"
-                  title="Yammer Group"
-                  overwrite-options="prohibitied"
+  <p:ImportSequence file="another-file.xml" />
+
+  <p:Sequence ID="seqq-2" SequenceType="Asynchronous">
+    <p:YammerGroup ID="y123"
+                  Title="Yammer Group"
+                  OverwriteOptions="Prohibitied"
                   network="{YammerNetwork}"/>
     <p:YammerGroup
-                  title="Another Yammer Group"
-                  overwrite-options="prohibitied"
+                  Title="Another Yammer Group"
+                  OverwriteOptions="Prohibitied"
                   network="{YammerNetwork}"/>
   </p:Sequence>
-  <p:Sequence id="s3" sequence-type="synchronous" overwrite-options="prohibitied">
-    <p:User title="John Doe" id="user1"/>
-    <p:User title="Jane Doe" id="user2"/>
-    <p:Group title="Test Users" overwrite-options="allowed">
+
+  <p:Sequence ID="s3" SequenceType="Synchronous" OverwriteOptions="Prohibitied">
+    <p:User Title="John Doe" ID="user1"/>
+    <p:User Title="Jane Doe" ID="user2"/>
+    <p:Group Title="Test Users" OverwriteOptions="Allowed">
       <p:GroupMembers>
-        <p:UserRef id="user1"/>
-        <p:UserRef id="user2"/>
-      </p:GroupMembers> 
+        <p:UserRef ID="user1"/>
+        <p:UserRef ID="user2"/>
+      </p:GroupMembers>
     </p:Group>
     <p:Extensions>
       <my:CustomExtension  xmlns:my="http://tempuri"/>

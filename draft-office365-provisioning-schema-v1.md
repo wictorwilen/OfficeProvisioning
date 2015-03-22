@@ -92,9 +92,18 @@ The Schema currently support the following top level Containers
 
 Other containers are
 * Site (SPO)
-* List, Library, Folder, File
+* List, Library, Folder, File (SPO)
 * Site Group (SPO)
 * Term Group, Term Set, Term (SPO)
+
+### To provision or not provision
+
+The Schema has an attribute `provisioning-action` that is used to define how 
+the Container or item should provisioned or not. The default value is 
+`provision` which indicates that the engine MUST provision the item. A value
+of `unprovision` indicates that the engine MUST unprovision or permanently
+delete the item. A value of `ignore` indicates that the engine MUST ignore/skip
+provisioning/unprovisioning of the item.
 
 ### Extensions
 
@@ -103,7 +112,7 @@ element is ment to be used for extensions to the Schema. It might be vendor
 or engine specific extensions or fill gaps that the current schema does not 
 currently support.
 
-Extensions can be used in a Container or in a Sequence.
+Extensions can be used in a `Container` or in a `Sequence`.
 
 ~~~
 <p:Extensions>
