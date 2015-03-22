@@ -25,7 +25,6 @@
         <p:Feature ID="b50e3104-6812-424f-a011-cc90e6327318" Activate="true" Scope="Site"  />
       </p:Features>
     </p:SiteTemplate>
-
   </p:Templates>
   <p:Sequence ID="use-the-templates">
     <p:SiteCollection
@@ -102,6 +101,18 @@
           </p:Views>
 
         </p:List>
+        <p:List Url="_catalogs/design" Title="Composed Looks" TemplateType="124">
+          <p:DataRows>
+            <p:DataRow>
+              <p:DataValue FieldName="Title">My Theme</p:DataValue>
+              <p:DataValue FieldName="MasterPageUrl">/_catalogs/masterpage/oslo.master</p:DataValue>
+              <p:DataValue FieldName="ThemeUrl">/_catalogs/theme/15/mytheme.spcolor</p:DataValue>
+              <p:DataValue FieldName="ImageUrl">/SiteAssets/mytheme.jpg</p:DataValue>
+              <p:DataValue FieldName="FontSchemeUrl">/_catalogs/theme/15/mythemefonts.spfont</p:DataValue>
+              <p:DataValue FieldName="DisplayOrder">13</p:DataValue>
+            </p:DataRow>
+          </p:DataRows>
+        </p:List>
       </p:Lists>
       <p:Features>
 
@@ -153,6 +164,9 @@
       </p:Pages>
       <p:Files>
         <p:File Source="Assets\Classification-{lcid}.js" Target="~sitecollection/SiteAssets/Classification-{lcid}.js" OverwriteOptions="Allowed"/>
+        <p:File Source="Assets\mytheme.spcolor" Target="~sitecollection/_catalogs/theme/15/mytheme.spcolor" OverwriteOptions="Allowed"/>
+        <p:File Source="Assets\mytheme.jpg" Target="~sitecollection/SiteAssets/mytheme.jpg" OverwriteOptions="Allowed"/>
+        <p:File Source="Assets\mythemefonts.spfont" Target="~sitecollection/_catalogs/theme/15/mythemefonts.spfont" OverwriteOptions="Allowed"/>
       </p:Files>
       <p:CustomActions>
         <p:CustomAction ScriptSrc="~sitecollection/SiteAssets/Classification-{lcid}.js"

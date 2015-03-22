@@ -155,7 +155,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name='FeatureScopeType'>
+  <xs:simpleType name='FeatureScopeDefinition'>
     <xs:annotation>
       <xs:documentation xml:lang="en">
         The Scope of a feature
@@ -217,7 +217,7 @@
   </xs:simpleType>
 
   <!-- Base classes-->
-  <xs:complexType name="ExtensionsType" >
+  <xs:complexType name="ExtensionsDefinition" >
     <xs:annotation>
       <xs:documentation xml:lang="en">
         Extensions are custom XML elements and instructions that can be extensions of this default schema or vendor or engine specific extensions.
@@ -229,7 +229,7 @@
 
   </xs:complexType>
 
-  <xs:complexType name="GroupMembersType" >
+  <xs:complexType name="GroupMembersDefinition" >
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="GroupMember" minOccurs="0" maxOccurs="unbounded">
         <xs:complexType>
@@ -247,9 +247,9 @@
   </xs:complexType>
 
   <!--The base container type-->
-  <xs:complexType name="ContainerType" abstract="true">
+  <xs:complexType name="ContainerDefinition" abstract="true">
     <xs:sequence minOccurs="0" maxOccurs="1">
-      <xs:element name="Extensions" type="ExtensionsType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Extensions" type="ExtensionsDefinition" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="ID" type="xs:ID"  use="optional">
       <xs:annotation>
@@ -287,7 +287,7 @@
     </xs:attribute>
   </xs:complexType>
 
-  <xs:complexType name="SiteTemplatesType">
+  <xs:complexType name="SiteTemplatesDefinition">
     <xs:simpleContent>
       <xs:extension base="SiteTemplateOptions">
         <xs:attribute name="Locale" use="required" type="ReplaceableInt">
@@ -302,11 +302,11 @@
   </xs:complexType>
 
   <!-- For instance a SharePoint Site Collection-->
-  <xs:complexType name="SiteCollectionType"  >
+  <xs:complexType name="SiteCollectionDefinition"  >
     <xs:complexContent>
-      <xs:extension base="SiteType">
+      <xs:extension base="SiteDefinition">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="TermStore" type="TermStoreType" maxOccurs="unbounded"/>
+          <xs:element name="TermStore" type="TermStoreDefinition" maxOccurs="unbounded"/>
         </xs:choice>
         <xs:attribute name="Url" type="ReplaceableString" use="required">
           <xs:annotation>
@@ -369,13 +369,13 @@
   </xs:complexType>
 
   <!-- For instance a SharePoint Site -->
-  <xs:complexType name="SiteType" >
+  <xs:complexType name="SiteDefinition" >
     <xs:complexContent>
-      <xs:extension base="ContainerType">
+      <xs:extension base="ContainerDefinition">
         <xs:sequence>
           <xs:choice minOccurs="1">
             <xs:element name="TemplateReference" type="xs:IDREF" nillable="false"/>
-            <xs:element name="SiteTemplate" type="SiteTemplatesType" nillable="false" />
+            <xs:element name="SiteTemplate" type="SiteTemplatesDefinition" nillable="false" />
           </xs:choice>
           <xs:group  minOccurs="0" maxOccurs="unbounded" ref="SiteElements"/>
         </xs:sequence>
@@ -385,98 +385,96 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="SitesDefinition">
+    <xs:sequence>
+      <xs:element name="Site" type="SiteDefinition" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="ListsDefinition">
+    <xs:sequence>
+      <xs:element name="List" type="ListDefinition" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="FilesDefinition">
+    <xs:sequence>
+      <xs:element name="File" type="FileDefinition" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="PagesDefinition">
+    <xs:sequence>
+      <xs:element name="Page" type="PageDefinition" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="FeaturesDefinition">
+    <xs:sequence>
+      <xs:element name="Feature" type="FeatureDefinition" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="FieldsDefinition">
+    <xs:sequence>
+      <xs:element name="Field" type="FieldDefinition" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="ContentTypesDefinition">
+    <xs:sequence>
+      <xs:element name="ContentType" type="ContentTypeDefinition" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="SiteGroupsDefinition">
+    <xs:sequence>
+      <xs:element name="DefaultSiteGroup" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="SiteGroupMembers" type="GroupMembersDefinition" minOccurs="0" maxOccurs="1"/>
+          </xs:sequence>
+          <xs:attribute name="DefaultGroup" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="Visitors"/>
+                <xs:enumeration value="Members"/>
+                <xs:enumeration value="Owners"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attributeGroup ref="GroupAttributes"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="SiteGroup" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="SiteGroupMembers" type="GroupMembersDefinition" minOccurs="0" maxOccurs="1"/>
+          </xs:sequence>
+          <xs:attribute name="Title" use="required" type="ReplaceableString"/>
+          <xs:attributeGroup ref="GroupAttributes"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CustomActionsDefinition">
+    <xs:sequence>
+      <xs:element name="CustomAction" type="CustomActionDefinition" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  
   <xs:group name="SiteElements">
     <xs:sequence >
-
-      <xs:element name="Sites" minOccurs="0" maxOccurs="1"  >
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="Site" type="SiteType" maxOccurs="unbounded" minOccurs="0"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="Lists"  minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="List" type="ListType" maxOccurs="unbounded" minOccurs="0"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="Files"  minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="File" type="FileType" maxOccurs="unbounded" minOccurs="0"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-
-      <xs:element name="Pages"  minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="Page" type="PageType" maxOccurs="unbounded" minOccurs="0"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="Features"  minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="Feature" type="FeatureType" maxOccurs="unbounded" minOccurs="0"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="Fields"  minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="Field" type="FieldType" maxOccurs="unbounded" minOccurs="0"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="ContentTypes"  minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="ContentType" type="ContentTypeType" maxOccurs="unbounded" minOccurs="0"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="SiteGroups" minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="DefaultSiteGroup" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="SiteGroupMembers" type="GroupMembersType" minOccurs="0" maxOccurs="1"/>
-                </xs:sequence>
-                <xs:attribute name="DefaultGroup" use="required">
-                  <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                      <xs:enumeration value="Visitors"/>
-                      <xs:enumeration value="Members"/>
-                      <xs:enumeration value="Owners"/>
-                    </xs:restriction>
-                  </xs:simpleType>
-                </xs:attribute>
-                <xs:attributeGroup ref="GroupAttributes"/>
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="SiteGroup" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="SiteGroupMembers" type="GroupMembersType" minOccurs="0" maxOccurs="1"/>
-                </xs:sequence>
-                <xs:attribute name="Title" use="required" type="ReplaceableString"/>
-                <xs:attributeGroup ref="GroupAttributes"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="CustomActions"  minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="CustomAction" type="CustomActionType" maxOccurs="unbounded" minOccurs="0" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
+      <xs:element name="Sites"  type="SitesDefinition" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Lists"  type="ListsDefinition" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Files"  type="FilesDefinition" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Fields"  type="FieldsDefinition" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Pages"  type="PagesDefinition" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Features"  type="FeaturesDefinition" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ContentTypes" type="ContentTypesDefinition" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="SiteGroups" type="SiteGroupsDefinition" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="CustomActions" type="CustomActionsDefinition" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:group>
 
@@ -533,15 +531,15 @@
     </xs:attribute>
   </xs:attributeGroup>
 
-  <xs:complexType name="SiteTemplateType" >
+  <xs:complexType name="SiteTemplateDefinition" >
     <xs:complexContent>
-      <xs:extension base="ContainerType">
+      <xs:extension base="ContainerDefinition">
         <xs:sequence>
           <xs:choice>
-            <xs:element name="SiteTemplate" type="SiteTemplatesType" nillable="false" minOccurs="1"/>
+            <xs:element name="SiteTemplate" type="SiteTemplatesDefinition" nillable="false" minOccurs="1"/>
           </xs:choice>
           <xs:choice>
-            <xs:element name="PropertyBag" type="PropertyBagType" nillable="false" minOccurs="0"/>
+            <xs:element name="PropertyBag" type="PropertyBagDefinition" nillable="false" minOccurs="0"/>
           </xs:choice>
           <xs:group  minOccurs="0" maxOccurs="unbounded" ref="SiteElements"/>
         </xs:sequence>
@@ -551,9 +549,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="CustomActionType">
+  <xs:complexType name="CustomActionDefinition">
     <xs:complexContent>
-      <xs:extension base="ContainerType">
+      <xs:extension base="ContainerDefinition">
         <xs:attribute name="Location" type="xs:string" use="optional" >
           <xs:annotation>
             <xs:appinfo source="https://msdn.microsoft.com/en-us/library/office/bb802730.aspx"/>
@@ -571,13 +569,13 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="PropertyBagType">
+  <xs:complexType name="PropertyBagDefinition">
     <xs:sequence>
-      <xs:element name="Property" type="PropertyType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="Property" type="PropertyDefinition" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="PropertyType">
+  <xs:complexType name="PropertyDefinition">
     <xs:sequence>
     </xs:sequence>
     <xs:attribute name="Key" type="xs:string" use="required" />
@@ -597,9 +595,9 @@
     <xs:attribute name="AllowRequestToJoinLeave" type="xs:boolean"  use="optional"/>
   </xs:attributeGroup>
 
-  <xs:complexType name="FileType" >
+  <xs:complexType name="FileDefinition" >
     <xs:complexContent>
-      <xs:extension base="ContainerType">
+      <xs:extension base="ContainerDefinition">
         <xs:attribute name="Source" type="ReplaceableString" use="required">
           <xs:annotation>
             <xs:documentation>
@@ -612,9 +610,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="PageType" >
+  <xs:complexType name="PageDefinition" >
     <xs:complexContent>
-      <xs:extension base="ContainerType">
+      <xs:extension base="ContainerDefinition">
         <xs:sequence>
           <xs:element name="WebParts" minOccurs="0" maxOccurs="1">
             <xs:complexType>
@@ -633,9 +631,17 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="ListType" >
+  <xs:complexType name="DataValueDefinition">
+    <xs:simpleContent>
+      <xs:extension base="ReplaceableString">
+        <xs:attribute name="FieldName" use="required" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  
+  <xs:complexType name="ListDefinition" >
     <xs:complexContent>
-      <xs:extension base="ContainerType">
+      <xs:extension base="ContainerDefinition">
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element name="ContentTypeBindings" maxOccurs="1" minOccurs="0">
             <xs:complexType>
@@ -679,9 +685,26 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="DataRows" maxOccurs="1" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="DataRow" maxOccurs="unbounded" minOccurs="0">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="DataValue" maxOccurs="unbounded" minOccurs="0" type="DataValueDefinition"/>                       
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>              
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
         <xs:attribute name="Url" type="ReplaceableString" use="optional"/>
-        <xs:attribute name="TemplateType" type="xs:integer" use="required"/>
+        <xs:attribute name="TemplateType" type="xs:integer" use="required">
+          <xs:annotation>
+            <xs:appinfo source="https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.client.listtemplatetype.aspx"/>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="Description" type="xs:string" use="optional"/>
         <xs:attribute name="OnQuickLaunch" type="xs:boolean" use="optional" default="false"/>
         <xs:attribute name="QuickLaunchUrl" type="xs:string" use="optional"/>
@@ -701,7 +724,7 @@
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:complexType name="FieldType" >
+  <xs:complexType name="FieldDefinition" >
     <xs:choice minOccurs="0" maxOccurs="1">
       <xs:element name="Choices">
         <xs:complexType>
@@ -757,7 +780,7 @@
     <xs:anyAttribute processContents="skip"/>
   </xs:complexType>
 
-  <xs:complexType name="ContentTypeType" >
+  <xs:complexType name="ContentTypeDefinition" >
     <xs:all>
       <xs:element name="FieldRefs" minOccurs="0" maxOccurs="1">
         <xs:complexType>
@@ -783,16 +806,16 @@
     <xs:anyAttribute processContents="skip"/>
   </xs:complexType>
 
-  <xs:complexType name="FeatureType" >
+  <xs:complexType name="FeatureDefinition" >
     <xs:attribute name="ID" use="required" type="xs:string"/>
     <xs:attribute name="Name" use="optional" type="xs:string" />
     <xs:attribute name="Activate" use="optional" type="xs:boolean" default="true"/>
-    <xs:attribute name="Scope" use="optional" type="FeatureScopeType"/>
+    <xs:attribute name="Scope" use="optional" type="FeatureScopeDefinition"/>
   </xs:complexType>
 
-  <xs:complexType name="TermStoreType" >
+  <xs:complexType name="TermStoreDefinition" >
     <xs:complexContent>
-      <xs:extension base="ContainerType">
+      <xs:extension base="ContainerDefinition">
         <xs:sequence>
           <xs:element name="TermGroup" minOccurs="0" maxOccurs="unbounded">
             <xs:complexType>
@@ -804,7 +827,7 @@
                         <xs:complexContent>
                           <xs:extension base="TermBase">
                             <xs:sequence >
-                              <xs:element name="Term" type="TermType" minOccurs="0" maxOccurs="unbounded"/>
+                              <xs:element name="Term" type="TermDefinition" minOccurs="0" maxOccurs="unbounded"/>
                             </xs:sequence>
                           </xs:extension>
                         </xs:complexContent>
@@ -854,18 +877,18 @@
   </xs:complexType>
 <!--
  <xs:sequence maxOccurs="unbounded" minOccurs="0">
-          <xs:element name="Term" type="TermType"  maxOccurs="unbounded" minOccurs="0"/>
+          <xs:element name="Term" type="TermDefinition"  maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
 
 -->
-  <xs:complexType name="TermType" >
+  <xs:complexType name="TermDefinition" >
     <xs:complexContent>
       <xs:extension base="TermSetItem">
         <xs:all>
           <xs:element name="ChildTerms" minOccurs="0" maxOccurs="1">
             <xs:complexType>
               <xs:choice>
-                <xs:element name="Term" type="TermType"  maxOccurs="unbounded" minOccurs="0"/>
+                <xs:element name="Term" type="TermDefinition"  maxOccurs="unbounded" minOccurs="0"/>
               </xs:choice>
             </xs:complexType>
           </xs:element>
@@ -877,25 +900,25 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="UserType" >
+  <xs:complexType name="UserDefinition" >
     <xs:complexContent>
-      <xs:extension base="ContainerType">
+      <xs:extension base="ContainerDefinition">
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="GroupType" >
+  <xs:complexType name="GroupDefinition" >
     <xs:complexContent>
-      <xs:extension base="ContainerType">
+      <xs:extension base="ContainerDefinition">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element name="GroupMembers" type="GroupMembersType" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="GroupMembers" type="GroupMembersDefinition" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
 
-  <xs:complexType name="ImportSequenceType">
+  <xs:complexType name="ImportSequenceDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
         Imports sequences from an external file. All current properties should be sent to that file.
@@ -910,16 +933,14 @@
     </xs:attribute>
   </xs:complexType>
 
-  <xs:complexType name="TemplatesType">
+  <xs:complexType name="TemplatesDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
         Templates...
       </xs:documentation>
     </xs:annotation>
-    <xs:sequence maxOccurs="unbounded">
-      <xs:element name="SiteTemplate" type="SiteTemplateType" maxOccurs="unbounded" minOccurs="0">
-
-      </xs:element>
+    <xs:sequence >
+      <xs:element name="SiteTemplate" type="SiteTemplateDefinition"  minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="ID" type="xs:ID" use="required">
       <xs:annotation>
@@ -930,7 +951,7 @@
     </xs:attribute>
   </xs:complexType>
 
-  <xs:complexType name="SequenceType" >
+  <xs:complexType name="SequenceDefinition" >
     <xs:annotation>
       <xs:documentation xml:lang="en">
         Each Provisioning file is split into a set of Sequence elements.
@@ -939,9 +960,9 @@
       </xs:documentation>
     </xs:annotation>
     <xs:sequence maxOccurs="unbounded" >
-      <xs:element name="SiteCollection" type="SiteCollectionType" maxOccurs="unbounded" minOccurs="0"/>
-      <xs:element name="TermStore" type="TermStoreType" maxOccurs="unbounded" minOccurs="0"/>
-      <xs:element name="Extensions" type="ExtensionsType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="SiteCollection" type="SiteCollectionDefinition" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="TermStore" type="TermStoreDefinition" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="Extensions" type="ExtensionsDefinition" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="SequenceType" default="Synchronous" use="optional">
       <xs:annotation>
@@ -984,7 +1005,7 @@
     </xs:attribute>
   </xs:complexType>
 
-  <xs:complexType name="PreferencesType" >
+  <xs:complexType name="PreferencesDefinition" >
     <xs:annotation>
       <xs:documentation>General settins of this Provisioning file</xs:documentation>
     </xs:annotation>
@@ -1008,7 +1029,7 @@
         </xs:annotation>
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="Parameter" maxOccurs="unbounded" >
+            <xs:element name="Parameter" maxOccurs="unbounded">
               <xs:complexType mixed="true">
                 <xs:attribute name="Key" use="required" type="xs:string">
                   <xs:annotation>
@@ -1051,19 +1072,19 @@
     </xs:attribute>
   </xs:complexType>
 
-  <xs:complexType name="ProvisioningType">
+  <xs:complexType name="ProvisioningDefinition">
     <xs:sequence>
-      <xs:element name="Preferences" type="PreferencesType" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="Preferences" type="PreferencesDefinition" minOccurs="1" maxOccurs="1"/>
       <xs:sequence minOccurs="1" maxOccurs="unbounded">
-        <xs:element name="Templates" type="TemplatesType" minOccurs="0"/>
-        <xs:element name="Sequence" type="SequenceType" minOccurs="0"/>
-        <xs:element name="ImportSequence" type="ImportSequenceType"  minOccurs="0"/>
+        <xs:element name="Templates" type="TemplatesDefinition" minOccurs="0"/>
+        <xs:element name="Sequence" type="SequenceDefinition" minOccurs="0"/>
+        <xs:element name="ImportSequence" type="ImportSequenceDefinition"  minOccurs="0"/>
       </xs:sequence>
     </xs:sequence>
   </xs:complexType>
 
   <!-- The main element-->
-  <xs:element name="Provisioning" type="ProvisioningType">
+  <xs:element name="Provisioning" type="ProvisioningDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
         This is the base element of a Provisioning File.
