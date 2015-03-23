@@ -13,17 +13,18 @@
   <p:Templates ID="site-templates">
     <!-- template token: $tenanturl, $url, $name...?-->
     <p:SiteTemplate ID="template1" Title="Default Team Site" QuickLaunchEnabled="false" EnableMinimalDownload="true">
-      <p:Extensions>
-        <asdf:asdf xmlns:asdf="asdf"/>
-        <pnp:RemoveAllDefaultThemes xmlns:pnp="http://pnp"/>
-      </p:Extensions>
-      <p:SiteTemplate Locale="1053">STS#0</p:SiteTemplate>
+     
+      <p:BaseConfiguration Locale="1053">STS#0</p:BaseConfiguration>
       <p:PropertyBag>
         <p:Property Key="SiteType" Value="Team Site" Indexed="true"/>
       </p:PropertyBag>
       <p:Features>
         <p:Feature ID="b50e3104-6812-424f-a011-cc90e6327318" Activate="true" Scope="Site"  />
       </p:Features>
+      <p:Extensions>
+        <asdf:asdf xmlns:asdf="asdf"/>
+        <pnp:RemoveAllDefaultThemes xmlns:pnp="http://pnp"/>
+      </p:Extensions>
     </p:SiteTemplate>
   </p:Templates>
   <p:Sequence ID="use-the-templates">
@@ -33,6 +34,23 @@
       ID="ti1"
       PrimarySiteCollectionAdmin="garth.forth@contoso.com"
       >
+      
+      <p:TemplateReference>template1</p:TemplateReference>
+      <p:TermSets>
+        <p:TermSet Name="asdf">
+          <p:Term Name="asdf">
+            <p:ChildTerms>
+              
+            </p:ChildTerms>
+          </p:Term>
+        </p:TermSet>
+      </p:TermSets>
+      <p:Fields>
+        <Field
+          xmlns="http://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd"
+          ID="{7B2B1712-A73D-4ad7-A9D0-662F0291713D}" Name="HealthRuleCheckEnabled" Type="Boolean" Group="_Hidden" AllowDeletion="FALSE" DisplayName="Aktiverad"  SourceID="http://schemas.microsoft.com/sharepoint/v3/fields" StaticName="HealthRuleCheckEnabled" Description="Om alternativet är markerat kontrolleras detta problem regelbundet." Overwrite="TRUE" ProvisioningAction="Provision" />
+
+      </p:Fields>
       <p:Extensions>
         <pnp:TypeExtension xmlns:pnp="http://pnp" assembly="Abc.Def" type="Abc.Def.Ghi"/>
         <pnp:ThemeExtension xmlns:pnp="http://pnp"
@@ -45,13 +63,6 @@
                   SiteLogo="Resources/Themes/Contoso/contosologo.png"
                   Version="1" />
       </p:Extensions>
-      <p:TemplateReference>template1</p:TemplateReference>
-      <p:Fields>
-        <Field
-          xmlns="http://github.com/wictorwilen/OfficeProvisioning/OfficeProvisioningSchema-1.0.xsd"
-          ID="{7B2B1712-A73D-4ad7-A9D0-662F0291713D}" Name="HealthRuleCheckEnabled" Type="Boolean" Group="_Hidden" AllowDeletion="FALSE" DisplayName="Aktiverad"  SourceID="http://schemas.microsoft.com/sharepoint/v3/fields" StaticName="HealthRuleCheckEnabled" Description="Om alternativet är markerat kontrolleras detta problem regelbundet." Overwrite="TRUE" ProvisioningAction="Provision" />
-
-      </p:Fields>
     </p:SiteCollection>
   </p:Sequence>
   <p:Sequence SequenceType="Synchronous" ID="seq-1">
@@ -62,10 +73,10 @@
       Url="https://{O365TenantName}.sharepoint.com/teams/team-sites"
       OverwriteOptions="Allowed"
       PrimarySiteCollectionAdmin="garth.forth@contoso.com">
-      <p:SiteTemplate Locale="1033">DEV#0</p:SiteTemplate>
+      <p:BaseConfiguration Locale="1033">DEV#0</p:BaseConfiguration>
       <p:Sites>
         <p:Site ID="s123" Title="Sub site" Url="sub-site">
-          <p:SiteTemplate Locale="{lcid}">EHS#0</p:SiteTemplate>
+          <p:BaseConfiguration Locale="{lcid}">EHS#0</p:BaseConfiguration>
           <p:Fields>
             <p:Field ID="{6E4F734B-6479-4046-B84F-220ACD432F1E}" Type="Choice" Name="Choices">
               <p:Choices>
@@ -114,6 +125,7 @@
           </p:DataRows>
         </p:List>
       </p:Lists>
+
       <p:Features>
 
       </p:Features>
@@ -123,6 +135,44 @@
                 OverwriteOptions="Allowed"
                 TemplateFile="Assets\HomepageTemplate.aspx">
           <p:WebParts ZoneID="Left" ZoneIndex="0">
+            <p:WebPartXmlDefinition>
+              <![CDATA[<webParts>
+  <webPart xmlns="http://schemas.microsoft.com/WebPart/v3">
+    <metaData>
+      <type name="Microsoft.SharePoint.WebPartPages.GettingStartedWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" />
+      <importErrorMessage>Det går inte att importera den här webbdelen.</importErrorMessage>
+    </metaData>
+    <data>
+      <properties>
+        <property name="AllowZoneChange" type="bool">True</property>
+        <property name="HelpUrl" type="string" />
+        <property name="Hidden" type="bool">False</property>
+        <property name="MissingAssembly" type="string">Det går inte att importera den här webbdelen.</property>
+        <property name="Description" type="string" />
+        <property name="BaseViewID" type="string">1</property>
+        <property name="AllowHide" type="bool">True</property>
+        <property name="AllowMinimize" type="bool">True</property>
+        <property name="Title" type="string">{REPLACETHIS}</property>
+        <property name="TitleUrl" type="string" />
+        <property name="ExportMode" type="exportmode">All</property>
+        <property name="ChromeType" type="chrometype">None</property>
+        <property name="AllowConnect" type="bool">True</property>
+        <property name="Width" type="string" />
+        <property name="Height" type="string" />
+        <property name="CatalogIconImageUrl" type="string" />
+        <property name="HelpMode" type="helpmode">Modeless</property>
+        <property name="AllowEdit" type="bool">True</property>
+        <property name="TitleIconImageUrl" type="string" />
+        <property name="Direction" type="direction">NotSet</property>
+        <property name="AllowClose" type="bool">True</property>
+        <property name="ChromeState" type="chromestate">Normal</property>
+      </properties>
+    </data>
+  </webPart>
+</webParts>]]>
+            </p:WebPartXmlDefinition>
+          </p:WebParts>
+          <p:WebParts ZoneID="Left" ZoneIndex="1">
             <p:WebPartXmlDefinition>
               <![CDATA[<webParts>
   <webPart xmlns="http://schemas.microsoft.com/WebPart/v3">
@@ -225,8 +275,7 @@
         </ContentType>
 
       </p:ContentTypes>
-      <p:TermStore Scope="Current">
-        <p:TermGroup Name="asdf" ID="{C49CE6E0-6CA5-4F9F-89A4-49FAE4B8338A}">
+      <p:TermSets>
           <p:TermSet Name="Termset" ID="{5880B01B-5D6F-4606-A492-3B03A2FB4DD7}">
             <p:Term Name="term 1"/>
             <p:Term Name="term   2">
@@ -249,8 +298,7 @@
               </p:Properties>
             </p:Term>
           </p:TermSet>
-        </p:TermGroup>
-      </p:TermStore>
+      </p:TermSets>
 
     </p:SiteCollection>
 

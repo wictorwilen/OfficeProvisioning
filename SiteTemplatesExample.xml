@@ -5,13 +5,21 @@
   <p:Templates>
     <p:SiteTemplate ID="SiteTemplate1"
                     Title="Team Site">
-      <p:Extensions>
-        <pnp:RemoveAllThemes xmlns:pnp="http://pnp/extensions"/>
-      </p:Extensions>
-      <p:SiteTemplate Locale="1033">STS#0</p:SiteTemplate>
+      
+      
+      <p:BaseConfiguration Locale="1033">STS#0</p:BaseConfiguration>
+      <p:Features/>
+      <p:ContentTypes/>
+      <p:CustomActions/>
       <p:Files>
         <p:File Source="Assets/Classification.js" Target="~site/SiteAssets/classification.js" OverwriteOptions="Allowed"/>
       </p:Files>
+      <p:Extensions>
+        <pnp:RemoveAllThemes xmlns:pnp="http://pnp/extensions"/>
+      </p:Extensions>
+      <p:ContentTypes></p:ContentTypes>
+      <p:Features></p:Features>
+
     </p:SiteTemplate>
   </p:Templates>
 

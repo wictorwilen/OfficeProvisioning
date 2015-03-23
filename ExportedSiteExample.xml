@@ -17,8 +17,12 @@
             CustomMasterUrl="/_catalogs/masterpage/oslo.master"
             Url="https://contoso.sharepoint.com/teams/teamsite"
             >
-      <p:SiteTemplate Locale="1033">STS#0</p:SiteTemplate>
+      <p:BaseConfiguration Locale="1033">STS#0</p:BaseConfiguration>
+      <p:Sites/>
       <p:ContentTypes></p:ContentTypes>
+      <p:CustomActions></p:CustomActions>
+      <p:ContentTypes/>
+      <p:Sites/>
     </p:Site>
   </p:Sequence>
 
