@@ -537,7 +537,8 @@
 
   <xs:complexType name="ContentTypesDefinition">
     <xs:sequence>
-      <xs:element name="ContentType" type="ContentTypeDefinition" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element name="ContentType" type="ContentTypeDefinition" maxOccurs="unbounded" minOccurs="0">
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -578,19 +579,6 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:group name="XXXSiteElements">
-    <xs:sequence >
-      <xs:element name="Sites"  type="SitesDefinition" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="Lists"  type="ListsDefinition" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="Files"  type="FilesDefinition" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="Fields"  type="FieldsDefinition" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="Pages"  type="PagesDefinition" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="Features"  type="FeaturesDefinition" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="ContentTypes" type="ContentTypesDefinition" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="SiteGroups" type="SiteGroupsDefinition" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="CustomActions" type="CustomActionsDefinition" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
-  </xs:group>
 
 
 
@@ -1006,13 +994,13 @@
         The Sequences must be evaluated by the provisioning engine in the order in which they appear.
       </xs:documentation>
     </xs:annotation>
-    <xs:all>
-      <xs:element name="SiteCollection" type="SiteCollectionDefinition" minOccurs="0"/>
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="SiteCollection" type="SiteCollectionDefinition" minOccurs="0" />
       <xs:element name="Site" type="SiteDefinition"  minOccurs="0"/>
       <xs:element name="TermStore" type="TermStoreDefinition"  minOccurs="0"/>
       <xs:element name="Extensions" type="ExtensionsDefinition" minOccurs="0" maxOccurs="1"/>
       <!-- TODO: add more top level items here-->
-    </xs:all>
+    </xs:sequence>
     <xs:attribute name="SequenceType" default="Synchronous" use="optional">
       <xs:annotation>
         <xs:documentation xml:lang="en">
